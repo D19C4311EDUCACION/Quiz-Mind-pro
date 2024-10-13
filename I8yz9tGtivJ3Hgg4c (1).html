@@ -1,0 +1,951 @@
+<html><head><base href="https://minigames.com/culture-quiz-advanced-random/" />
+<title>QuizMind Pro: Cultura General Aleatoria por Niveles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#764ba2">
+<style>
+  :root {
+    --text-color: #ffffff;
+    --button-bg: linear-gradient(45deg, #3498db, #2980b9);
+    --button-hover-bg: linear-gradient(45deg, #2980b9, #3498db);
+    --win-color: #2ecc71;
+    --lose-color: #e74c3c;
+  }
+  html {
+    font-size: 16px;
+  }
+  body {
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    font-size: 1rem;
+    color: var(--text-color);
+  }
+  #game-container {
+    text-align: center;
+    padding: 1.5rem;
+    border-radius: 15px;
+    max-width: 90%;
+    width: 600px;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    animation: fadeIn 0.5s ease-out;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  }
+  #main-menu {
+    text-align: center;
+  }
+  #level-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .level-button {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .level-button:hover {
+    background: var(--button-hover-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  .level-button:active {
+    transform: translateY(-1px);
+  }
+  #level, #question, #score, #timer {
+    margin-bottom: 1rem;
+  }
+  #options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  button {
+    width: 100%;
+    padding: 1rem 0.75rem;
+    font-size: 1rem;
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 5px 0;
+  }
+  button:hover {
+    background: var(--button-hover-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  button:active {
+    transform: translateY(-1px);
+  }
+  button.correct {
+    background: var(--win-color);
+  }
+  button.incorrect {
+    background: var(--lose-color);
+  }
+  #back-to-menu {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    background: var(--button-bg);
+    color: var(--text-color);
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  #back-to-menu:hover {
+    background: var(--button-hover-bg);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  #back-to-menu:active {
+    transform: translateY(-1px);
+  }
+  #next-level-button {
+    background: var(--win-color);
+    color: white;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+  }
+  #next-level-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+  #progress-bar {
+    width: 100%;
+    height: 10px;
+    background-color: rgba(236, 240, 241, 0.3);
+    border-radius: 5px;
+    margin-top: 1rem;
+    overflow: hidden;
+  }
+  #progress {
+    height: 100%;
+    background: linear-gradient(90deg, #f1c40f, #f39c12);
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+  }
+  #settings-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background: var(--button-bg);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  #settings-button:hover {
+    transform: rotate(90deg) scale(1.1);
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+  }
+  .modal-content {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    margin: 15% auto;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    width: 90%;
+    max-width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    color: #ffffff;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  .close:hover,
+  .close:focus {
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .settings-option {
+    margin-bottom: 15px;
+  }
+  .settings-option label {
+    display: inline-block;
+    width: 150px;
+  }
+  .settings-option input[type="checkbox"],
+  .settings-option select {
+    margin-left: 10px;
+  }
+  input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+  }
+  #question {
+    animation: float 3s ease-in-out infinite;
+  }
+  @media (min-width: 768px) {
+    html {
+      font-size: 18px;
+    }
+    #options {
+      grid-template-columns: 1fr;
+    }
+    #game-container {
+      padding: 2rem;
+    }
+  }
+  @media (min-width: 1024px) {
+    html {
+      font-size: 20px;
+    }
+    #game-container {
+      max-width: 800px;
+    }
+  }
+  @media (max-width: 320px) {
+    html {
+      font-size: 14px;
+    }
+    #game-container {
+      padding: 1rem;
+    }
+    .settings-option label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .settings-option input[type="checkbox"],
+    .settings-option select {
+      margin-left: 0;
+    }
+  }
+</style>
+</head>
+<body>
+<div id="game-container">
+  <div id="main-menu" style="display: block;">
+    <h2>Selecciona un nivel</h2>
+    <div id="level-buttons">
+      <button class="level-button" data-level="1">Nivel 1</button>
+      <button class="level-button" data-level="2">Nivel 2</button>
+      <button class="level-button" data-level="3">Nivel 3</button>
+      <button class="level-button" data-level="4">Nivel 4</button>
+      <button class="level-button" data-level="5">Nivel 5</button>
+    </div>
+  </div>
+  <button id="settings-button">
+    <svg id="settings-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+  </button>
+  <h1>QuizMind Pro</h1>
+  <div id="level" style="display: none;">Nivel: <span id="current-level">1</span></div>
+  <div id="question" style="display: none;"></div>
+  <div id="options" style="display: none;"></div>
+  <div id="timer" style="display: none;">Tiempo restante: <span id="time-left">20</span></div>
+  <div id="score" style="display: none;">Puntuación: <span id="current-score">0</span></div>
+  <button id="back-to-menu" style="display: none;">Volver al Menú</button>
+  <div id="progress-bar" style="display: none;"><div id="progress"></div></div>
+</div>
+
+<div id="settings-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h2>Configuración</h2>
+    <div class="settings-option">
+      <label for="time-limit">Límite de tiempo:</label>
+      <select id="time-limit">
+        <option value="10">10 segundos</option>
+        <option value="20" selected>20 segundos</option>
+        <option value="30">30 segundos</option>
+      </select>
+    </div>
+    <div class="settings-option">
+      <label for="sound-effects">Efectos de sonido:</label>
+      <input type="checkbox" id="sound-effects" checked>
+    </div>
+    <div class="settings-option">
+      <label for="background-music">Música de fondo:</label>
+      <input type="checkbox" id="background-music-toggle" checked>
+    </div>
+    <div class="settings-option">
+      <label for="background-image">Fondo:</label>
+      <select id="background-image">
+        <option value="color">Color</option>
+        <option value="gradient" selected>Gradiente</option>
+        <option value="custom">Personalizada</option>
+        <option value="device">Desde dispositivo</option>
+      </select>
+    </div>
+    <div class="settings-option" id="color-bg-input" style="display: none;">
+      <label for="background-color">Color de fondo:</label>
+      <input type="color" id="background-color" value="#f0f0f0">
+    </div>
+    <div class="settings-option" id="custom-bg-input" style="display: none;">
+      <label for="custom-bg-url">URL de imagen:</label>
+      <input type="text" id="custom-bg-url" placeholder="https://ejemplo.com/imagen.jpg">
+    </div>
+    <div class="settings-option" id="device-bg-input" style="display: none;">
+      <label for="device-bg-file">Seleccionar imagen:</label>
+      <input type="file" id="device-bg-file" accept="image/*">
+    </div>
+    <div class="settings-option">
+      <label for="text-color">Color de texto:</label>
+      <input type="color" id="text-color" value="#ffffff">
+    </div>
+    <div class="settings-option">
+      <label for="win-color">Color de victoria:</label>
+      <input type="color" id="win-color" value="#2ecc71">
+    </div>
+    <div class="settings-option">
+      <label for="lose-color">Color de derrota:</label>
+      <input type="color" id="lose-color" value="#e74c3c">
+    </div>
+    <div class="settings-option">
+      <label for="theme">Tema:</label>
+      <select id="theme">
+        <option value="default" selected>Predeterminado</option>
+        <option value="dark">Oscuro</option>
+        <option value="light">Claro</option>
+        <option value="colorful">Colorido</option>
+        <option value="custom">Personalizado</option>
+      </select>
+    </div>
+    <div class="settings-option">
+      <label for="background-music-volume">Volumen de música:</label>
+      <input type="range" id="background-music-volume" min="0" max="1" step="0.1" value="0.5">
+    </div>
+    <div class="settings-option">
+      <label for="sound-effects-volume">Volumen de efectos de sonido:</label>
+      <input type="range" id="sound-effects-volume" min="0" max="1" step="0.1" value="0.5">
+    </div>
+    <div id="custom-theme-colors" style="display: none;">
+      <div class="settings-option">
+        <label for="custom-button-color">Color de botones:</label>
+        <input type="color" id="custom-button-color" value="#3498db">
+      </div>
+      <div class="settings-option">
+        <label for="custom-button-hover-color">Color de botones (hover):</label>
+        <input type="color" id="custom-button-hover-color" value="#2980b9">
+      </div>
+    </div>
+    <button id="save-settings">Guardar configuración</button>
+  </div>
+</div>
+
+<audio id="correct-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+<audio id="incorrect-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+<audio id="level-up-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-arcade-game-complete-or-approved-mission-205.mp3"></audio>
+<audio id="game-over-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-player-losing-or-failing-2042.mp3"></audio>
+<audio id="settings-sound" src="https://assets.mixkit.co/sfx/preview/mixkit-click-error-1110.mp3"></audio>
+<audio id="background-music" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-ukulele.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+function shuffleArray(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
+
+const questions = [
+  {
+    question: "¿Cuál es la capital de Francia?",
+    options: ["Londres", "Berlín", "París", "Madrid"],
+    correctAnswer: 2,
+    level: 1
+  },
+  {
+    question: "¿Cuál es el planeta más cercano al Sol?",
+    options: ["Venus", "Marte", "Mercurio", "Júpiter"],
+    correctAnswer: 2,
+    level: 1
+  },
+  {
+    question: "¿Cuál es el océano más grande?",
+    options: ["Atlántico", "Índico", "Ártico", "Pacífico"],
+    correctAnswer: 3,
+    level: 1
+  },
+  {
+    question: "¿En qué año comenzó la Segunda Guerra Mundial?",
+    options: ["1939", "1941", "1945", "1938"],
+    correctAnswer: 0,
+    level: 2
+  },
+  {
+    question: "¿Quién escribió 'Cien años de soledad'?",
+    options: ["Mario Vargas Llosa", "Gabriel García Márquez", "Pablo Neruda", "Julio Cortázar"],
+    correctAnswer: 1,
+    level: 2
+  },
+  {
+    question: "¿Cuál es el elemento químico más abundante en el universo?",
+    options: ["Oxígeno", "Carbono", "Helio", "Hidrógeno"],
+    correctAnswer: 3,
+    level: 2
+  },
+  {
+    question: "¿En qué año se descubrió la estructura del ADN?",
+    options: ["1953", "1962", "1947", "1971"],
+    correctAnswer: 0,
+    level: 3
+  },
+  {
+    question: "¿Quién pintó 'La noche estrellada'?",
+    options: ["Claude Monet", "Vincent van Gogh", "Salvador Dalí", "Pablo Picasso"],
+    correctAnswer: 1,
+    level: 3
+  },
+  {
+    question: "¿Cuál es la partícula subatómica más pesada?",
+    options: ["Protón", "Neutrón", "Electrón", "Quark top"],
+    correctAnswer: 3,
+    level: 3
+  },
+  {
+    question: "¿Cuál es el río más largo del mundo?",
+    options: ["Amazonas", "Nilo", "Yangtsé", "Misisipi"],
+    correctAnswer: 1,
+    level: 4
+  },
+  {
+    question: "¿Quién desarrolló la teoría de la relatividad?",
+    options: ["Isaac Newton", "Niels Bohr", "Albert Einstein", "Stephen Hawking"],
+    correctAnswer: 2,
+    level: 4
+  },
+  {
+    question: "¿En qué año se fundó la Organización de las Naciones Unidas (ONU)?",
+    options: ["1945", "1950", "1939", "1955"],
+    correctAnswer: 0,
+    level: 4
+  },
+  {
+    question: "¿Cuál es el elemento químico con el número atómico 79?",
+    options: ["Platino", "Mercurio", "Plata", "Oro"],
+    correctAnswer: 3,
+    level: 5
+  },
+  {
+    question: "¿Quién escribió 'El Principito'?",
+    options: ["Jules Verne", "Antoine de Saint-Exupéry", "Victor Hugo", "Albert Camus"],
+    correctAnswer: 1,
+    level: 5
+  },
+  {
+    question: "¿Cuál es la velocidad de la luz en el vacío?",
+    options: ["299,792 km/s", "300,000 km/s", "310,000 km/s", "280,000 km/s"],
+    correctAnswer: 0,
+    level: 5
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+let level = 1;
+let selectedLevel = 1;
+let shuffledQuestions = [];
+
+const questionElement = document.getElementById("question");
+const optionsElement = document.getElementById("options");
+const timerElement = document.getElementById("time-left");
+const scoreElement = document.getElementById("current-score");
+const levelElement = document.getElementById("current-level");
+const progressBar = document.getElementById("progress");
+const backToMenuButton = document.getElementById("back-to-menu");
+const backgroundMusic = document.getElementById("background-music");
+const backgroundMusicToggle = document.getElementById("background-music-toggle");
+const textColorInput = document.getElementById("text-color");
+const backgroundColorInput = document.getElementById("background-color");
+const winColorInput = document.getElementById("win-color");
+const loseColorInput = document.getElementById("lose-color");
+const backgroundMusicVolume = document.getElementById("background-music-volume");
+const soundEffectsVolume = document.getElementById("sound-effects-volume");
+
+const themes = {
+  default: {
+    buttonBg: 'linear-gradient(45deg, #3498db, #2980b9)',
+    buttonHoverBg: 'linear-gradient(45deg, #2980b9, #3498db)'
+  },
+  dark: {
+    buttonBg: 'linear-gradient(45deg, #2c3e50, #34495e)',
+    buttonHoverBg: 'linear-gradient(45deg, #34495e, #2c3e50)'
+  },
+  light: {
+    buttonBg: 'linear-gradient(45deg, #ecf0f1, #bdc3c7)',
+    buttonHoverBg: 'linear-gradient(45deg, #bdc3c7, #ecf0f1)'
+  },
+  colorful: {
+    buttonBg: 'linear-gradient(45deg, #e74c3c, #3498db)',
+    buttonHoverBg: 'linear-gradient(45deg, #3498db, #e74c3c)'
+  },
+  color: {
+    buttonBg: '#ff6b6b',
+    buttonHoverBg: '#ff8787'
+  },
+  custom: {
+    buttonBg: '#3498db',
+    buttonHoverBg: '#2980b9'
+  }
+};
+
+const themeSelect = document.getElementById("theme");
+const customThemeColors = document.getElementById("custom-theme-colors");
+const customButtonColor = document.getElementById("custom-button-color");
+const customButtonHoverColor = document.getElementById("custom-button-hover-color");
+
+themeSelect.addEventListener("change", function() {
+  if (this.value === "custom") {
+    customThemeColors.style.display = "block";
+  } else {
+    customThemeColors.style.display = "none";
+  }
+});
+
+function applyTheme(themeName) {
+  const theme = themes[themeName];
+  if (themeName === "custom") {
+    document.documentElement.style.setProperty('--button-bg', customButtonColor.value);
+    document.documentElement.style.setProperty('--button-hover-bg', customButtonHoverColor.value);
+  } else {
+    document.documentElement.style.setProperty('--button-bg', theme.buttonBg);
+    document.documentElement.style.setProperty('--button-hover-bg', theme.buttonHoverBg);
+  }
+  document.documentElement.style.setProperty('--text-color', textColorInput.value);
+  applyColors();
+}
+
+function applyColors() {
+  document.documentElement.style.setProperty('--win-color', winColorInput.value);
+  document.documentElement.style.setProperty('--lose-color', loseColorInput.value);
+}
+
+function playSound(soundId) {
+  if (document.getElementById("sound-effects").checked) {
+    const sound = document.getElementById(soundId);
+    sound.volume = soundEffectsVolume.value;
+    sound.currentTime = 0;
+    sound.play();
+  }
+}
+
+function playSettingsSound() {
+  playSound("settings-sound");
+}
+
+function toggleBackgroundMusic() {
+  if (backgroundMusicToggle.checked) {
+    backgroundMusic.volume = backgroundMusicVolume.value;
+    backgroundMusic.play().catch(error => {
+      console.log("Audio play failed:", error);
+    });
+  } else {
+    backgroundMusic.pause();
+  }
+}
+
+function initializeBackgroundMusic() {
+  if (backgroundMusicToggle.checked) {
+    backgroundMusic.volume = backgroundMusicVolume.value;
+    backgroundMusic.play().catch(error => {
+      console.log("Audio play failed:", error);
+    });
+  }
+}
+
+function checkLevelProgression() {
+  if (currentQuestion % 3 === 0 && currentQuestion < shuffledQuestions.length && level < 5) {
+    level++;
+    levelElement.textContent = level;
+    playSound("level-up-sound");
+  }
+}
+
+function showMainMenu() {
+  document.getElementById("main-menu").style.display = "block";
+  document.getElementById("level").style.display = "none";
+  document.getElementById("question").style.display = "none";
+  document.getElementById("options").style.display = "none";
+  document.getElementById("timer").style.display = "none";
+  document.getElementById("score").style.display = "none";
+  document.getElementById("progress-bar").style.display = "none";
+  backToMenuButton.style.display = "none";
+
+  // Reset score when returning to main menu
+  score = 0;
+  scoreElement.textContent = score;
+}
+
+function startGame(level) {
+  selectedLevel = level;
+  currentQuestion = 0;
+  score = 0;
+  scoreElement.textContent = score; // Update the displayed score
+  document.getElementById("main-menu").style.display = "none";
+  document.getElementById("level").style.display = "block";
+  document.getElementById("question").style.display = "block";
+  document.getElementById("options").style.display = "block";
+  document.getElementById("timer").style.display = "block";
+  document.getElementById("score").style.display = "block";
+  document.getElementById("progress-bar").style.display = "block";
+  backToMenuButton.style.display = "inline-block";
+  
+  const levelQuestions = questions.filter(q => q.level === selectedLevel);
+  shuffledQuestions = shuffleArray([...levelQuestions]);
+  
+  loadQuestion();
+  
+  initializeBackgroundMusic();
+  checkOnlineStatus();
+}
+
+function checkOnlineStatus() {
+  if (!navigator.onLine) {
+    alert('Estás offline. Algunas funciones pueden no estar disponibles.');
+  }
+}
+
+function loadQuestion() {
+  if (currentQuestion >= shuffledQuestions.length) {
+    endGame();
+    return;
+  }
+  const question = shuffledQuestions[currentQuestion];
+  questionElement.textContent = question.question;
+  optionsElement.innerHTML = "";
+  
+  const shuffledOptions = shuffleArray([...question.options]);
+  shuffledOptions.forEach((option, index) => {
+    const button = document.createElement("button");
+    button.textContent = option;
+    button.addEventListener("click", () => selectAnswer(index, shuffledOptions));
+    optionsElement.appendChild(button);
+  });
+
+  resetTimer();
+  updateProgressBar();
+  levelElement.textContent = selectedLevel;
+}
+
+function selectAnswer(index, shuffledOptions) {
+  clearInterval(timer);
+  const buttons = optionsElement.getElementsByTagName("button");
+  const correctAnswer = shuffledQuestions[currentQuestion].options[shuffledQuestions[currentQuestion].correctAnswer];
+  const correctIndex = shuffledOptions.indexOf(correctAnswer);
+
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = true;
+    if (i === correctIndex) {
+      buttons[i].classList.add("correct");
+    } else if (i === index) {
+      buttons[i].classList.add("incorrect");
+    }
+  }
+
+  if (index === correctIndex) {
+    score++;
+    scoreElement.textContent = score;
+    playSound("correct-sound");
+    setTimeout(() => {
+      currentQuestion++;
+      checkLevelProgression();
+      loadQuestion();
+    }, 2000);
+  } else {
+    playSound("incorrect-sound");
+    setTimeout(() => {
+      restartLevel();
+    }, 2000);
+  }
+}
+
+function resetTimer() {
+  clearInterval(timer);
+  timeLeft = parseInt(document.getElementById("time-limit").value);
+  timerElement.textContent = timeLeft;
+  timer = setInterval(() => {
+    timeLeft--;
+    timerElement.textContent = timeLeft;
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      restartLevel();
+    }
+  }, 1000);
+}
+
+function updateProgressBar() {
+  const progress = (currentQuestion / shuffledQuestions.length) * 100;
+  progressBar.style.width = `${progress}%`;
+}
+
+function endGame() {
+  questionElement.textContent = "";
+  clearInterval(timer);
+  const totalQuestions = shuffledQuestions.length;
+  const halfQuestions = Math.ceil(totalQuestions / 2);
+
+  if (score < halfQuestions) {
+    questionElement.textContent = `No has superado el nivel ${selectedLevel}. ¡Inténtalo de nuevo!`;
+    optionsElement.innerHTML = "";
+    backToMenuButton.style.display = "inline-block";
+    playSound("game-over-sound");
+    setTimeout(() => {
+      restartLevel();
+    }, 3000);
+  } else {
+    questionElement.textContent = `¡Felicidades! 🎉🎊 Nivel ${selectedLevel} completado!`;
+    optionsElement.innerHTML = `
+      <button id="next-level-button">Siguiente Nivel</button>
+    `;
+    document.getElementById("next-level-button").addEventListener("click", goToNextLevel);
+    backToMenuButton.style.display = "inline-block";
+    playSound("level-up-sound");
+  }
+}
+
+function goToNextLevel() {
+  if (selectedLevel < 5) {
+    selectedLevel++;
+    startGame(selectedLevel);
+  } else {
+    questionElement.textContent = "¡Felicidades! 🎉🎊 Has completado el juego, genio 🧞‍♂️ Espero verte en otra entrega.";
+    optionsElement.innerHTML = "";
+    backToMenuButton.style.display = "inline-block";
+  }
+}
+
+function restartLevel() {
+  currentQuestion = 0;
+  score = 0;
+  const levelQuestions = questions.filter(q => q.level === selectedLevel);
+  shuffledQuestions = shuffleArray([...levelQuestions]);
+  scoreElement.textContent = score;
+  updateProgressBar(); // Add this line to reset the progress bar
+  loadQuestion();
+}
+
+backToMenuButton.addEventListener("click", () => {
+  playSettingsSound();
+  showMainMenu();
+});
+
+document.querySelectorAll('.level-button').forEach(button => {
+  button.addEventListener('click', () => {
+    startGame(parseInt(button.getAttribute('data-level')));
+  });
+});
+
+showMainMenu();
+
+const settingsButton = document.getElementById("settings-button");
+const settingsModal = document.getElementById("settings-modal");
+const closeButton = document.getElementsByClassName("close")[0];
+const saveSettingsButton = document.getElementById("save-settings");
+const backgroundSelect = document.getElementById("background-image");
+const customBgInput = document.getElementById("custom-bg-input");
+const deviceBgInput = document.getElementById("device-bg-input");
+const colorBgInput = document.getElementById("color-bg-input");
+const customBgUrl = document.getElementById("custom-bg-url");
+const deviceBgFile = document.getElementById("device-bg-file");
+
+settingsButton.onclick = () => {
+  playSettingsSound();
+  settingsModal.style.display = "block";
+}
+
+closeButton.onclick = () => {
+  settingsModal.style.display = "none";
+}
+
+window.onclick = (event) => {
+  if (event.target == settingsModal) {
+    settingsModal.style.display = "none";
+  }
+}
+
+backgroundSelect.onchange = () => {
+  customBgInput.style.display = backgroundSelect.value === "custom" ? "block" : "none";
+  deviceBgInput.style.display = backgroundSelect.value === "device" ? "block" : "none";
+  colorBgInput.style.display = backgroundSelect.value === "color" ? "block" : "none";
+}
+
+backgroundColorInput.addEventListener("input", () => {
+  if (backgroundSelect.value === "color") {
+    document.body.style.background = backgroundColorInput.value;
+  }
+});
+
+let selectedDeviceImage = null;
+
+deviceBgFile.onchange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedDeviceImage = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+saveSettingsButton.onclick = () => {
+  const timeLimit = document.getElementById("time-limit").value;
+  const soundEffects = document.getElementById("sound-effects").checked;
+  const backgroundImage = backgroundSelect.value;
+
+  const selectedTheme = themeSelect.value;
+  if (selectedTheme === "custom") {
+    themes.custom.buttonBg = customButtonColor.value;
+    themes.custom.buttonHoverBg = customButtonHoverColor.value;
+  }
+  applyTheme(selectedTheme);
+  
+  applyColors();
+
+  document.documentElement.style.setProperty('--text-color', textColorInput.value);
+  
+  setBackgroundMusicVolume();
+  setSoundEffectsVolume();
+
+  resetTimer();
+
+  toggleBackgroundMusic();
+
+  if (backgroundImage === "color") {
+    document.body.style.background = backgroundColorInput.value;
+    document.body.style.backgroundImage = "none";
+  } else if (backgroundImage === "gradient") {
+    document.body.style.background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+    document.body.style.backgroundImage = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
+  } else if (backgroundImage === "custom" && customBgUrl.value) {
+    document.body.style.backgroundImage = `url('${customBgUrl.value}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
+  } else if (backgroundImage === "device" && selectedDeviceImage) {
+    document.body.style.backgroundImage = `url('${selectedDeviceImage}')`;
+    document.body.style.backgroundSize = "cover";
+    document.body.style.backgroundPosition = "center";
+    document.body.style.backgroundRepeat = "no-repeat";
+    document.body.style.backgroundAttachment = "fixed";
+  }
+
+  settingsModal.style.display = "none";
+}
+
+function setBackgroundMusicVolume() {
+  backgroundMusic.volume = backgroundMusicVolume.value;
+}
+
+function setSoundEffectsVolume() {
+  const sounds = [
+    document.getElementById("correct-sound"),
+    document.getElementById("incorrect-sound"),
+    document.getElementById("level-up-sound"),
+    document.getElementById("game-over-sound"),
+    document.getElementById("settings-sound")
+  ];
+  sounds.forEach(sound => sound.volume = soundEffectsVolume.value);
+}
+
+window.addEventListener("load", () => {
+  applyTheme('default');
+  textColorInput.value = getComputedStyle(document.documentElement).getPropertyValue('--text-color').trim();
+  backgroundColorInput.value = "#f0f0f0"; // Set a default color
+  applyColors();
+  setBackgroundMusicVolume();
+  setSoundEffectsVolume();
+  if (backgroundSelect.value === "color") {
+    document.body.style.background = backgroundColorInput.value;
+  }
+});
+
+// Replace the existing line at the end of the script
+document.body.style.background = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+document.body.style.backgroundImage = "linear-gradient(135deg, #667eea 0%, #764ba2 100%)";
+document.body.style.backgroundSize = "cover";
+document.body.style.backgroundPosition = "center";
+document.body.style.backgroundRepeat = "no-repeat";
+document.body.style.backgroundAttachment = "fixed";
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then((registration) => {
+        console.log('Service Worker registered successfully:', registration.scope);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}
+</script>
+</body>
+</html>
